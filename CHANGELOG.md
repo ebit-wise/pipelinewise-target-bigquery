@@ -1,4 +1,4 @@
-1.3.0 (2021-12-20)
+1.3.0 (2022-03-20)
 -------------------
 - Add `hard_delete_mapping` for switching specific streams
 - Add `batch_wait_limit_seconds` config
