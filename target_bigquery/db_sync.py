@@ -160,9 +160,9 @@ def safe_column_name(name, quotes=False):
     pattern = '[^a-zA-Z0-9_]'
     name = re.sub(pattern, '_', name)
     if quotes:
-        return '`{}`'.format(name).lower()
+        return '`{}`'.format(name) #.lower()
     else:
-        return '{}'.format(name).lower()
+        return '{}'.format(name) #.lower()
 
 
 def is_unstructured_object(props):
@@ -181,7 +181,7 @@ def flatten_key(k, parent_key, sep):
     while len(sep.join(inflected_key)) >= 255 and reducer_index < len(inflected_key):
         reduced_key = re.sub(r'[a-z]', '', camelize(inflected_key[reducer_index]))
         inflected_key[reducer_index] = \
-            (reduced_key if len(reduced_key) > 1 else inflected_key[reducer_index][0:3]).lower()
+            (reduced_key if len(reduced_key) > 1 else inflected_key[reducer_index][0:3]) #.lower()
         reducer_index += 1
 
     return sep.join(inflected_key)
@@ -386,10 +386,10 @@ class DbSync:
     def table_name(self, stream_name, is_temporary=False, without_schema=False):
         stream_dict = stream_name_to_dict(stream_name)
         pattern = '[^a-zA-Z0-9]'
-        table_name = re.sub(pattern, '_', stream_dict['table_name']).lower()
+        table_name = re.sub(pattern, '_', stream_dict['table_name']) #.lower()
 
         if is_temporary:
-            table_name =  '{}_temp'.format(table_name)
+            table_name =  '{}_temp_{}'.format(table_name, datetime.datetime.now().strftime("%Y%m%d-%H%M%S-%f").replace('-', '_'))
 
         if without_schema:
             return '{}'.format(table_name)
@@ -658,8 +658,8 @@ class DbSync:
         columns_to_replace = [
             column_type(name, properties_schema)
             for (name, properties_schema) in self.flatten_schema.items()
-            if name.lower() in columns and
-               columns[name.lower()] != column_type(name, properties_schema)
+            if name in columns and # name.lower()
+               columns[name] != column_type(name, properties_schema) # name.lower()
         ]
 
         for field in columns_to_replace:
