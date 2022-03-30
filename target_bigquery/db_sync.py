@@ -585,7 +585,7 @@ class DbSync:
 
         table = bigquery.Table(table_ref, schema=schema)
         if is_temporary:
-            table.expires = datetime.datetime.now() + datetime.timedelta(days=1)
+            table.expires = datetime.datetime.now() + datetime.timedelta(hours=1)
 
         self.client.create_table(table)
 
