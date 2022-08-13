@@ -70,6 +70,12 @@ def adjust_timestamps_in_record(record: Dict, schema: Dict) -> None:
                     if 'string' in type_dict['type'] and type_dict.get('format', None) in {'date-time', 'time', 'date'}:
                         reset_new_value(record, key, type_dict['format'])
                         break
+            elif 'properties' in schema['properties'][key]:
+                for nested_key, nested_value in record[key].items():
+                    if nested_value is not None and nested_key in schema['properties'][key]['properties']:
+                        if 'string' in schema['properties'][key]['properties'][nested_key]['type'] and \
+                                schema['properties'][key]['properties'][nested_key].get('format', None) in {'date-time', 'time', 'date'}:
+                            reset_new_value(record[key], nested_key, schema['properties'][key]['properties'][nested_key]['format'])
             else:
                 if 'string' in schema['properties'][key]['type'] and \
                         schema['properties'][key].get('format', None) in {'date-time', 'time', 'date'}:
