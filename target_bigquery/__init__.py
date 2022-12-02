@@ -73,6 +73,7 @@ def persist_lines(config, lines) -> None:
     default_hard_delete = config.get('hard_delete', DEFAULT_HARD_DELETE)
     hard_delete_mapping = config.get('hard_delete_mapping', {})
     batch_wait_limit_seconds = config.get('batch_wait_limit_seconds', None)
+    table_name_prefix = config.get('table_name_prefix', '')
 
     # Loop over lines from stdin
     for line in lines:
@@ -100,6 +101,10 @@ def persist_lines(config, lines) -> None:
         if t == 'RECORD':
             if 'stream' not in o:
                 raise Exception("Line is missing required key 'stream': {}".format(line))
+
+            # adding prefix to table name
+            o['stream'] = f"{table_name_prefix}{o['stream']}"
+
             if o['stream'] not in schemas:
                 raise Exception(
                     "A record for stream {} was encountered before a corresponding schema".format(o['stream']))
@@ -171,6 +176,9 @@ def persist_lines(config, lines) -> None:
         elif t == 'SCHEMA':
             if 'stream' not in o:
                 raise Exception("Line is missing required key 'stream': {}".format(line))
+
+            # adding prefix to table name
+            o['stream'] = f"{table_name_prefix}{o['stream']}"
 
             stream = o['stream']
 
