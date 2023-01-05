@@ -245,6 +245,8 @@ def stream_name_to_dict(stream_name, separator='-', table_name_prefix=''):
     catalog_name = None
     schema_name = None
     table_name = stream_name
+    if table_name_prefix in table_name:
+        table_name_prefix = ''
 
     # Schema and table name can be derived from stream if it's in <schema_name>-<table_name> format
     s = stream_name.split(separator)
