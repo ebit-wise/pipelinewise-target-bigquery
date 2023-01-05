@@ -241,7 +241,7 @@ def flatten_record(d, parent_key=[], sep='__', level=0, max_level=0):
 def primary_column_names(stream_schema_message):
     return [safe_column_name(p) for p in stream_schema_message['key_properties']]
 
-def stream_name_to_dict(stream_name, separator='-'):
+def stream_name_to_dict(stream_name, separator='-', table_name_prefix=''):
     catalog_name = None
     schema_name = None
     table_name = stream_name
@@ -259,7 +259,7 @@ def stream_name_to_dict(stream_name, separator='-'):
     return {
         'catalog_name': catalog_name,
         'schema_name': schema_name,
-        'table_name': table_name
+        'table_name': table_name_prefix + table_name
     }
 
 # pylint: disable=too-many-public-methods,too-many-instance-attributes
@@ -284,6 +284,7 @@ class DbSync:
                                     purposes.
         """
         self.connection_config = connection_config
+        self.table_name_prefix = connection_config.get("table_name_prefix", "")
         self.stream_schema_message = stream_schema_message
 
         # Validate connection configuration
@@ -384,7 +385,7 @@ class DbSync:
         return query_job
 
     def table_name(self, stream_name, is_temporary=False, without_schema=False):
-        stream_dict = stream_name_to_dict(stream_name)
+        stream_dict = stream_name_to_dict(stream_name, table_name_prefix=self.table_name_prefix)
         pattern = '[^a-zA-Z0-9]'
         table_name = re.sub(pattern, '_', stream_dict['table_name']) #.lower()
 
